@@ -108,6 +108,17 @@
             background: radial-gradient(circle, var(--gold) 0%, rgba(214,189,145,0) 70%);
             animation: fall linear infinite;
         }
+        /* Nieve suave sobre toda la invitación */
+        #page-snow { position: fixed; inset: 0; pointer-events: none; z-index: 900; overflow: hidden; display: none; }
+        body.content-active #page-snow { display: block; }
+        #page-snow .flake { background: radial-gradient(circle, rgba(214,189,145,.95) 0%, rgba(214,189,145,0) 70%); }
+
+        /* Luces navideñas */
+        .lights { position: absolute; top: 0; left: 0; width: 100%; height: 80px; pointer-events: none; z-index: 5; }
+        .lights svg { width: 100%; height: 100%; display: block; }
+        .bulb { animation: twinkle 2.4s ease-in-out infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+
         @keyframes fall {
             0% { transform: translateY(-20px) translateX(0); opacity: 0; }
             10% { opacity: .9; }
@@ -297,6 +308,7 @@
 <body>
 
     <audio id="bg-music" src="assets/song.mp3" loop></audio>
+    <div id="page-snow"></div>
 
     <button id="music-btn" class="sticky-music-btn" onclick="toggleMusic()" aria-label="Controlar música">
         <svg id="music-icon-play" style="display:none;" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -337,6 +349,7 @@
 
         <!-- Bienvenida -->
         <section class="section-block bg-ivory">
+            <div class="lights"></div>
             <div class="branch-deco anim-element anim-zoom delay-1" data-branch="tl" style="top: -10px; left: -40px; transform: rotate(20deg);"></div>
             <div class="branch-deco anim-element anim-zoom delay-2" data-branch="br" style="bottom: 20px; right: -40px; transform: rotate(200deg);"></div>
 
@@ -412,6 +425,8 @@
                         <li>Elaboración de tapetes típicos de Huamantla</li>
                         <li>Tour en globo aerostático (2 hrs)</li>
                         <li>Tour Museo del Pulque (incluye degustación)</li>
+                        <li>Clínica de pádel (1 hr)</li>
+                        <li>Clínica de tenis (1 hr)</li>
                     </ul>
                     <div class="tl-desc">Al terminar tu actividad, disfruta de tiempo libre.</div>
                 </div>
@@ -535,6 +550,8 @@
                             <option>Elaboración de tapetes típicos de Huamantla</option>
                             <option>Tour en globo aerostático (2 hrs)</option>
                             <option>Tour Museo del Pulque (incluye degustación)</option>
+                            <option>Clínica de pádel (1 hr)</option>
+                            <option>Clínica de tenis (1 hr)</option>
                         </select>
                     </div>
                 </div>
@@ -559,6 +576,7 @@
 
         <!-- Mensaje especial -->
         <section class="section-block bg-forest">
+            <div class="lights"></div>
             <div class="branch-deco on-dark anim-element anim-zoom delay-1" data-branch="br" style="bottom: 0; right: -50px; transform: rotate(190deg);"></div>
             <div class="branch-deco on-dark anim-element anim-zoom delay-1" data-branch="tl" style="top: 0; left: -50px; transform: rotate(20deg);"></div>
 
@@ -602,31 +620,84 @@
     <script>
         // --- RAMAS NAVIDEÑAS (SVG generado) ---
         function buildBranch() {
+            const W = 240;
+            const stemY = x => 50 + 5 * Math.sin(x / 45);
+            // Dos capas de agujas: una oscura al fondo y otra más clara al frente (da profundidad)
+            const palettes = [['#12251c', '#18301f', '#1d3a2c'], ['#2a5340', '#34634d', '#437559', '#4f8266']];
             let needles = '';
-            for (let x = 18; x < 190; x += 14) {
-                const len = 20 + (x < 100 ? x / 8 : (200 - x) / 6);
-                needles += `<line x1="${x}" y1="40" x2="${x + 12}" y2="${40 - len}" />`;
-                needles += `<line x1="${x}" y1="40" x2="${x + 12}" y2="${40 + len}" />`;
+            palettes.forEach((pal, pass) => {
+                for (let x = 10; x < W - 6; x += (pass ? 3.6 : 3)) {
+                    const env = Math.pow(Math.sin(Math.PI * Math.min(1, x / W)), 0.55);
+                    [-1, 1].forEach(side => {
+                        const len = (9 + 28 * env) * (0.7 + Math.random() * 0.6) * (pass ? 0.82 : 1);
+                        const a = 0.4 + Math.random() * 0.8;
+                        const y0 = stemY(x) + (Math.random() - 0.5) * 2;
+                        const x1 = x + Math.cos(a) * len, y1 = y0 + side * Math.sin(a) * len;
+                        const cx = x + Math.cos(a) * len * 0.55, cy = y0 + side * Math.sin(a) * len * 0.4 - side * 1.6;
+                        const col = pal[Math.floor(Math.random() * pal.length)];
+                        const sw = (0.9 + Math.random() * 0.8).toFixed(2);
+                        needles += `<path d="M${x.toFixed(1)} ${y0.toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x1.toFixed(1)} ${y1.toFixed(1)}" stroke="${col}" stroke-width="${sw}"/>`;
+                    });
+                }
+            });
+            // Punta de la rama (agujas hacia adelante)
+            let tip = '';
+            for (let i = 0; i < 9; i++) {
+                const a = (i - 4) * 0.13;
+                tip += `<path d="M222 ${stemY(222).toFixed(1)} L${(222 + 17 * Math.cos(a)).toFixed(1)} ${(stemY(222) + 17 * Math.sin(a)).toFixed(1)}" stroke="${i % 2 ? '#3a6a52' : '#2a5340'}" stroke-width="1.2"/>`;
             }
-            return `<svg viewBox="0 0 200 80" fill="none" stroke-linecap="round">
-                <g stroke="#234536" stroke-width="2.2" opacity=".85">${needles}</g>
-                <path d="M4 40 Q100 36 196 40" stroke="#74615B" stroke-width="2"/>
-                <circle cx="60" cy="40" r="4.5" fill="#B69A61"/><circle cx="108" cy="38" r="4" fill="#D6BD91"/><circle cx="150" cy="40" r="4.5" fill="#B69A61"/>
+            const cone = `<g transform="rotate(-22 96 66)">
+                <ellipse cx="96" cy="66" rx="9" ry="15" fill="#6b4f3f"/>
+                <g stroke="#43302a" stroke-width="1" fill="none">
+                    <path d="M88 58 Q96 62 104 58"/><path d="M87.5 64 Q96 68 104.5 64"/><path d="M88 70 Q96 74 104 70"/><path d="M90 76 Q96 79 102 76"/>
+                    <path d="M96 52 L96 80"/>
+                </g>
+                <g stroke="#9a7a63" stroke-width=".8" fill="none"><path d="M89 61 Q96 65 103 61"/><path d="M89 67 Q96 71 103 67"/><path d="M91 73 Q96 76 101 73"/></g>
+            </g>`;
+            const berry = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#B69A61"/><circle cx="${x - r * 0.3}" cy="${y - r * 0.3}" r="${r * 0.35}" fill="#F3EBDD" opacity=".7"/>`;
+            return `<svg viewBox="0 0 240 100" fill="none" stroke-linecap="round">
+                <path d="M2 ${stemY(2)} Q120 ${stemY(120) - 2} 238 ${stemY(238)}" stroke="#5a4637" stroke-width="2.4"/>
+                <g>${needles}</g>${tip}
+                ${cone}
+                ${berry(150, 42, 3.4)}${berry(157, 48, 3)}${berry(146, 50, 3.2)}${berry(55, 56, 3.2)}${berry(62, 61, 2.8)}${berry(190, 58, 3)}
             </svg>`;
         }
+
+        // --- LUCES NAVIDEÑAS (guirnalda con foquitos que parpadean) ---
+        function buildLights(el) {
+            const W = 1200, seg = 200;
+            const cols = ['#F3D58A', '#FFF3D0', '#D6BD91', '#E9B96E'];
+            let wire = 'M0 4', bulbs = '';
+            for (let s = 0; s < W / seg; s++) {
+                const x0 = s * seg;
+                wire += ` Q${x0 + seg / 2} 58 ${x0 + seg} 4`;
+                for (let k = 1; k <= 4; k++) {
+                    const t = k / 5, u = 1 - t;
+                    const x = u * u * x0 + 2 * u * t * (x0 + seg / 2) + t * t * (x0 + seg);
+                    const y = u * u * 4 + 2 * u * t * 58 + t * t * 4;
+                    const c = cols[(s * 4 + k) % cols.length];
+                    const d = (((s * 4 + k) * 0.37) % 2.4).toFixed(2);
+                    bulbs += `<g class="bulb" style="animation-delay:-${d}s"><circle cx="${x.toFixed(1)}" cy="${(y + 10).toFixed(1)}" r="14" fill="${c}" opacity=".28"/><rect x="${(x - 2).toFixed(1)}" y="${y.toFixed(1)}" width="4" height="5" fill="#74615B"/><ellipse cx="${x.toFixed(1)}" cy="${(y + 11).toFixed(1)}" rx="5" ry="7" fill="${c}"/></g>`;
+                }
+            }
+            el.innerHTML = `<svg viewBox="0 0 ${W} 80" preserveAspectRatio="xMidYMin slice"><path d="${wire}" stroke="#B69A61" stroke-width="1.5" fill="none"/>${bulbs}</svg>`;
+        }
+        document.querySelectorAll('.lights').forEach(buildLights);
         document.querySelectorAll('[data-branch]').forEach(el => { el.innerHTML = buildBranch(); });
 
         // --- NIEVE DORADA ---
-        (function makeSnow() {
-            const layer = document.getElementById('snow-layer');
-            for (let i = 0; i < 38; i++) {
+        function makeSnow(id, count, minSize, maxSize) {
+            const layer = document.getElementById(id);
+            for (let i = 0; i < count; i++) {
                 const f = document.createElement('div');
-                const size = 4 + Math.random() * 9;
+                const size = minSize + Math.random() * (maxSize - minSize);
                 f.className = 'flake';
-                f.style.cssText = `left:${Math.random() * 100}%;width:${size}px;height:${size}px;animation-duration:${7 + Math.random() * 8}s;animation-delay:${Math.random() * 8}s;opacity:.8`;
+                f.style.cssText = `left:${Math.random() * 100}%;width:${size}px;height:${size}px;animation-duration:${8 + Math.random() * 9}s;animation-delay:${Math.random() * 10}s`;
                 layer.appendChild(f);
             }
-        })();
+        }
+        makeSnow('snow-layer', 38, 4, 13);
+        makeSnow('page-snow', 26, 3, 9); // nieve suave que cae sobre toda la invitación
 
         // --- CALENDARIO DICIEMBRE 2026 (1 de dic = martes) ---
         (function buildCalendar() {
