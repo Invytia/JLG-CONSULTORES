@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Posada de Gala 2026 - JLG Consultores S.C.</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Pinyon+Script&family=Montserrat:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Pinyon+Script&family=Montserrat:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
             --forest: #234536;
@@ -322,6 +322,14 @@
         .tl-list li:hover::before { transform: rotate(180deg) scale(1.3); }
         .bg-forest .tl-list li { color: #E8E0CF; }
 
+        .tl-link {
+            display: inline-block; margin-top: 14px; padding-bottom: 3px;
+            font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 500;
+            color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold);
+            transition: color .3s ease, letter-spacing .4s ease, border-color .3s ease;
+        }
+        .tl-link:hover { color: var(--forest); border-color: var(--forest); letter-spacing: 3px; }
+
         .act-note {
             display: inline-block; margin-top: 14px; padding: 8px 14px;
             font-size: 12px; letter-spacing: 1px; color: var(--forest); background: rgba(182,154,97,0.16);
@@ -331,6 +339,160 @@
         .day-label {
             font-family: 'Cinzel', serif; font-size: 22px; letter-spacing: 5px; text-transform: uppercase;
             color: var(--forest); margin: 15px 0 5px; font-weight: 500; position: relative; z-index: 2;
+        }
+
+        /* =========================================================
+           ACTIVIDADES Y MENÚ (secciones interactivas)
+           ========================================================= */
+        #actividades, #menu, #confirmacion { scroll-margin-top: 10px; }
+
+        /* Filtros */
+        .filters {
+            position: relative; z-index: 2; width: 100%; max-width: 900px; margin: 36px auto 0;
+            display: flex; flex-direction: column; gap: 22px; align-items: center;
+        }
+        .filter-group { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+        .filter-label {
+            font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 4px;
+            text-transform: uppercase; color: var(--taupe);
+        }
+        .filter-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        .chip {
+            font-family: 'Montserrat', sans-serif; font-size: 12px; letter-spacing: 1.5px;
+            padding: 10px 18px; border-radius: 50px; border: 1px solid rgba(182,154,97,.6);
+            background: transparent; color: var(--forest); cursor: pointer;
+            transition: all .35s ease;
+        }
+        .chip:hover { border-color: var(--gold); background: rgba(182,154,97,.14); transform: translateY(-2px); }
+        .chip.active { background: var(--forest); border-color: var(--forest); color: #fff; box-shadow: 0 6px 16px rgba(35,69,54,.22); }
+        .chip:focus-visible, .act-card:focus-visible, .menu-card:focus-visible, .link-btn:focus-visible {
+            outline: 2px solid var(--gold); outline-offset: 3px;
+        }
+        .result-count { position: relative; z-index: 2; margin-top: 22px; font-size: 12px; letter-spacing: 2px; color: var(--taupe); }
+
+        /* Tarjetas de actividad */
+        .act-grid {
+            position: relative; z-index: 2; width: 100%; max-width: 960px; margin: 26px auto 0;
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; text-align: left;
+        }
+        .act-item { height: 100%; }
+        .act-item.is-hidden { display: none; }
+
+        .act-card, .menu-card {
+            height: 100%; display: flex; flex-direction: column; position: relative; cursor: pointer;
+            background: #fff; border: 1px solid rgba(182,154,97,.32); border-radius: 3px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.05); -webkit-tap-highlight-color: transparent;
+            transition: transform .45s var(--transition-smooth), box-shadow .45s ease, border-color .35s ease, background .45s ease;
+        }
+        .act-card { padding: 26px 24px 22px; }
+        .act-card:hover, .menu-card:hover { transform: translateY(-5px); box-shadow: 0 18px 40px rgba(35,69,54,.13); border-color: var(--gold); }
+        .act-card.selected {
+            border-color: var(--forest); background: linear-gradient(180deg, #fff 0%, #F7F1E3 100%);
+            box-shadow: 0 0 0 1px var(--forest), 0 18px 40px rgba(35,69,54,.16);
+        }
+
+        .act-top { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+        .act-icon {
+            flex: 0 0 54px; height: 54px; border-radius: 50%; background: var(--forest);
+            display: flex; align-items: center; justify-content: center;
+            transition: transform .6s var(--transition-smooth);
+        }
+        .act-card:hover .act-icon { transform: rotate(-8deg) scale(1.08); }
+        .act-icon svg { width: 28px; height: 28px; fill: none; stroke: var(--champagne); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+        .act-name { font-family: 'Cormorant Garamond', serif; font-size: 26px; line-height: 1.15; color: var(--forest); font-weight: 500; }
+        .act-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+        .act-tag { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); font-weight: 500; }
+        .act-tag + .act-tag::before { content: '·'; margin-right: 6px; }
+        .act-desc { font-size: 14px; line-height: 1.7; color: var(--taupe); margin-bottom: 20px; flex: 1; }
+
+        .act-meta { display: flex; align-items: center; gap: 14px; }
+        .act-time { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 2px; color: var(--forest); white-space: nowrap; font-weight: 500; }
+        .meter { flex: 1; height: 4px; background: rgba(182,154,97,.25); border-radius: 4px; overflow: hidden; }
+        .meter i {
+            display: block; height: 100%; width: 0; border-radius: 4px;
+            background: linear-gradient(90deg, var(--champagne), var(--gold));
+            transition: width 1.4s var(--transition-smooth) .4s;
+        }
+        .act-item.in-view .meter i { width: var(--w); }
+
+        .act-cta {
+            margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(182,154,97,.3);
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 11px; letter-spacing: 3px; text-transform: uppercase; font-weight: 500; color: var(--gold);
+            transition: color .35s ease;
+        }
+        .check {
+            width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--gold);
+            display: flex; align-items: center; justify-content: center; transition: all .35s ease;
+        }
+        .check svg { width: 11px; height: 11px; stroke: #fff; stroke-width: 2.6; fill: none; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transform: scale(.4); transition: all .35s ease; }
+        .selected .act-cta { color: var(--forest); }
+        .selected .check { background: var(--forest); border-color: var(--forest); }
+        .selected .check svg { opacity: 1; transform: scale(1); }
+
+        .empty-note { display: none; position: relative; z-index: 2; margin-top: 30px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: var(--taupe); }
+        .empty-note.show { display: block; }
+
+        /* Resumen de elección */
+        .pick-summary {
+            position: relative; z-index: 2; width: 100%; max-width: 520px; margin-top: 38px; padding: 20px 24px;
+            border: 1px dashed rgba(182,154,97,.7); background: rgba(255,255,255,.6); border-radius: 3px;
+            font-size: 13px; color: var(--taupe); line-height: 1.7;
+            transition: border-color .4s ease, background .4s ease;
+        }
+        .pick-summary.has-pick { border-style: solid; border-color: var(--forest); background: #fff; }
+        .pick-label { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 4px; }
+        .pick-value { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--forest); font-weight: 600; line-height: 1.25; display: block; }
+        .pick-actions { display: none; margin-top: 12px; gap: 22px; justify-content: center; }
+        .has-pick .pick-actions { display: flex; }
+        .link-btn {
+            background: none; border: none; border-bottom: 1px solid var(--gold); padding: 2px 0; cursor: pointer;
+            font-family: 'Montserrat', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 500;
+            color: var(--gold); text-decoration: none; transition: color .3s ease, border-color .3s ease;
+        }
+        .link-btn:hover { color: var(--forest); border-color: var(--forest); }
+
+        /* Tarjetas de menú */
+        .menu-grid {
+            position: relative; z-index: 2; width: 100%; max-width: 1040px; margin: 40px auto 0;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; text-align: left;
+        }
+        .menu-card { padding: 34px 26px 24px; }
+        .menu-opt { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); font-weight: 500; transition: color .4s ease; }
+        .menu-main { font-family: 'Cormorant Garamond', serif; font-size: 32px; line-height: 1.15; color: var(--forest); font-weight: 500; margin: 8px 0 0; transition: color .4s ease; }
+        .menu-divider { width: 40px; height: 1px; background: var(--gold); margin: 20px 0 6px; }
+        .courses { flex: 1; }
+        .course { padding: 14px 0; border-bottom: 1px solid rgba(182,154,97,.25); transition: border-color .4s ease; }
+        .course:last-child { border-bottom: none; }
+        .course-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-weight: 500; transition: color .4s ease; }
+        .course-name { font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.25; color: var(--forest); font-weight: 600; margin-top: 3px; transition: color .4s ease; }
+        .course-desc { font-size: 13px; line-height: 1.65; color: var(--taupe); margin-top: 2px; transition: color .4s ease; }
+
+        .menu-card.selected { background: var(--forest); border-color: var(--forest); box-shadow: 0 22px 46px rgba(35,69,54,.35); }
+        .menu-card.selected .menu-opt, .menu-card.selected .course-label { color: var(--champagne); }
+        .menu-card.selected .menu-main, .menu-card.selected .course-name { color: #fff; }
+        .menu-card.selected .course-desc { color: #D9D2C0; }
+        .menu-card.selected .course { border-color: rgba(214,189,145,.25); }
+        .menu-card.selected .act-cta { color: var(--champagne); border-color: rgba(214,189,145,.35); }
+        .menu-card.selected .check { background: var(--champagne); border-color: var(--champagne); }
+        .menu-card.selected .check svg { stroke: var(--forest); }
+
+        /* Aviso flotante */
+        .toast {
+            position: fixed; left: 50%; bottom: 96px; transform: translate(-50%, 24px);
+            background: var(--forest); color: #fff; padding: 14px 26px; border-radius: 50px;
+            border: 1px solid var(--champagne); box-shadow: 0 12px 30px rgba(35,69,54,.35);
+            font-size: 13px; letter-spacing: 1px; text-align: center; max-width: calc(100vw - 40px);
+            z-index: 2200; opacity: 0; pointer-events: none;
+            transition: opacity .5s ease, transform .5s var(--transition-smooth);
+        }
+        .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+        @media (max-width: 900px) {
+            .menu-grid { grid-template-columns: 1fr; max-width: 520px; }
+        }
+        @media (max-width: 760px) {
+            .act-grid { grid-template-columns: 1fr; max-width: 520px; }
         }
 
         /* Formularios */
@@ -343,6 +505,7 @@
         .form-card-title { font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; font-weight: 500; }
         .form-card-sub { font-size: 12px; color: var(--taupe); letter-spacing: 1px; margin-bottom: 18px; }
         .form-group { width: 100%; max-width: 400px; margin: 0 auto 18px auto; position: relative; z-index: 2; }
+        .form-link-wrap { margin: 0 0 18px; }
         .input-line {
             width: 100%; padding: 16px 0; background: transparent; border: none; border-bottom: 1px solid rgba(0,0,0,0.15);
             color: var(--text-dark); font-family: 'Montserrat', sans-serif; font-size: 15px; outline: none;
@@ -400,11 +563,16 @@
             .branch-tl, .branch-br { width: 190px; }
             .tl-title { font-size: 24px; }
             .form-card { padding: 28px 18px 14px; }
+            .act-card { padding: 22px 18px 18px; }
+            .act-name { font-size: 24px; }
+            .menu-card { padding: 28px 20px 20px; }
+            .chip { padding: 9px 14px; font-size: 11px; }
         }
 
         @media (prefers-reduced-motion: reduce) {
             .sparkle, .btn-solid::after, .dress-item svg, .float-star, .shimmer-text, .cal-day.active, .cal-day.active2 { animation: none !important; }
             .sparkle { display: none; }
+            .act-card, .menu-card, .act-icon, .meter i { transition: none !important; }
         }
     </style>
 </head>
@@ -413,6 +581,7 @@
     <div id="scroll-progress"></div>
     <audio id="bg-music" src="assets/song.mp3" loop></audio>
     <div id="page-snow"></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <button id="music-btn" class="sticky-music-btn" onclick="toggleMusic()" aria-label="Controlar música">
         <svg id="music-icon-play" style="display:none;" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -523,17 +692,9 @@
                 <div class="tl-item anim-element anim-slide">
                     <div class="tl-time">11:00 a.m.</div>
                     <div class="tl-title">Llegada y actividad a elegir</div>
-                    <ul class="tl-list">
-                        <li>Cabalgata de una hora</li>
-                        <li>Curso de mixología</li>
-                        <li>Elaboración de tapetes típicos de Huamantla</li>
-                        <li>Tour en globo aerostático (2 hrs)</li>
-                        <li>Tour Museo del Pulque (incluye degustación)</li>
-                        <li>Clínica de pádel (1 hr)</li>
-                        <li>Clínica de tenis (1 hr)</li>
-                    </ul>
-                    <div class="act-note"><strong>Nota:</strong> solo puedes seleccionar una actividad.</div>
-                    <div class="tl-desc">Al terminar tu actividad, disfruta de tiempo libre.</div>
+                    <div class="tl-desc">Elige una de las actividades de bienvenida; cada una dura entre 30 y 60 minutos. Al terminar, disfruta de tiempo libre.</div>
+                    <div class="act-note"><strong>Nota:</strong> solo puedes seleccionar una actividad.</div><br>
+                    <a href="#actividades" class="tl-link">Conocer las actividades →</a>
                 </div>
 
                 <div class="tl-item anim-element anim-slide">
@@ -567,6 +728,54 @@
                         <li>Cena</li>
                         <li>Celebración, baile y DJ</li>
                     </ul>
+                    <a href="#menu" class="tl-link">Elegir mi menú →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======= ACTIVIDADES DE BIENVENIDA ======= -->
+        <section class="section-block bg-light" id="actividades">
+            <div class="branch-deco anim-element anim-zoom delay-1" data-branch="tl" style="top: 10px; left: -50px; transform: rotate(20deg);"></div>
+            <div class="branch-deco anim-element anim-zoom delay-1" data-branch="br" style="bottom: 10px; right: -50px; transform: rotate(190deg);"></div>
+
+            <div class="anim-element anim-fade-up delay-1 info-title">Viernes 11 · 11:00 a.m.</div>
+            <div class="anim-element anim-fade-up delay-2 info-data" style="font-size: 38px;">Actividades de bienvenida</div>
+            <p class="anim-element anim-fade-up delay-3 body-serif" style="margin-top: 14px; font-size: 21px;">
+                Conoce cada experiencia, compara su duración y toca la que más te guste para elegirla.
+            </p>
+            <div class="anim-element anim-fade-up delay-3 act-note">Solo puedes seleccionar <strong>una</strong> actividad.</div>
+
+            <div class="filters anim-element anim-fade-up delay-4">
+                <div class="filter-group">
+                    <div class="filter-label">Tipo de experiencia</div>
+                    <div class="filter-row" id="type-filters">
+                        <button type="button" class="chip active" data-type="all" aria-pressed="true">Todas</button>
+                        <button type="button" class="chip" data-type="cultura" aria-pressed="false">Cultura</button>
+                        <button type="button" class="chip" data-type="sabores" aria-pressed="false">Sabores</button>
+                        <button type="button" class="chip" data-type="manualidades" aria-pressed="false">Manualidades</button>
+                        <button type="button" class="chip" data-type="deporte" aria-pressed="false">Deporte y aire libre</button>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <div class="filter-label">Duración</div>
+                    <div class="filter-row" id="dur-filters">
+                        <button type="button" class="chip active" data-dur="all" aria-pressed="true">Cualquiera</button>
+                        <button type="button" class="chip" data-dur="short" aria-pressed="false">Hasta 40 min</button>
+                        <button type="button" class="chip" data-dur="hour" aria-pressed="false">Alrededor de 1 hora</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-count" id="act-count" aria-live="polite"></div>
+            <div class="act-grid" id="act-grid" role="group" aria-label="Actividades de bienvenida"></div>
+            <div class="empty-note" id="act-empty">Ninguna actividad coincide con esos filtros. Prueba con otra combinación.</div>
+
+            <div class="anim-element anim-fade-up pick-summary" id="act-summary">
+                <span class="pick-label">Tu actividad</span>
+                <span class="pick-value" id="act-summary-text">Aún no eliges una. Toca una tarjeta para seleccionarla.</span>
+                <div class="pick-actions">
+                    <a href="#confirmacion" class="link-btn">Ir a confirmar</a>
+                    <button type="button" class="link-btn" id="act-clear">Quitar</button>
                 </div>
             </div>
         </section>
@@ -619,6 +828,33 @@
             </div>
         </section>
 
+        <!-- ======= MENÚ NAVIDEÑO ======= -->
+        <section class="section-block bg-ivory" id="menu">
+            <div class="branch-deco anim-element anim-zoom delay-1" data-branch="tl" style="top: 10px; right: -50px; transform: rotate(160deg) scaleX(-1);"></div>
+            <div class="branch-deco anim-element anim-zoom delay-1" data-branch="br" style="bottom: 10px; left: -50px; transform: rotate(10deg) scaleX(-1);"></div>
+
+            <div class="anim-element anim-fade-up delay-1 info-title">Cena de gala · Viernes 8:00 p.m.</div>
+            <div class="anim-element anim-fade-up delay-2 info-data" style="font-size: 38px;">Menú navideño</div>
+            <p class="anim-element anim-fade-up delay-3 body-serif" style="margin-top: 14px; font-size: 21px;">
+                Elige la opción que más te guste. Cada una incluye entrada, plato fuerte, postre y ensalada de manzana.
+            </p>
+
+            <div class="menu-grid" id="menu-grid" role="radiogroup" aria-label="Menú navideño a elegir"></div>
+
+            <div class="anim-element anim-fade-up pick-summary" id="menu-summary">
+                <span class="pick-label">Tu menú</span>
+                <span class="pick-value" id="menu-summary-text">Aún no eliges uno. Toca una opción para seleccionarla.</span>
+                <div class="pick-actions">
+                    <a href="#confirmacion" class="link-btn">Ir a confirmar</a>
+                    <button type="button" class="link-btn" id="menu-clear">Quitar</button>
+                </div>
+            </div>
+
+            <div class="anim-element anim-fade-up note-box">
+                Si tienes alguna alergia o restricción alimentaria, escríbela en el mensaje de WhatsApp antes de enviarlo.
+            </div>
+        </section>
+
         <!-- Confirmación -->
         <section class="section-block bg-champagne" id="confirmacion">
             <div class="branch-deco anim-element anim-zoom delay-1" data-branch="tl" style="top: -10px; right: -50px; transform: rotate(170deg) scaleX(-1);"></div>
@@ -650,16 +886,21 @@
                     <div class="form-group">
                         <select id="rsvp-activity" class="input-line">
                             <option value="" disabled selected>Selecciona tu actividad</option>
-                            <option>Cabalgata de una hora</option>
-                            <option>Curso de mixología</option>
-                            <option>Elaboración de tapetes típicos de Huamantla</option>
-                            <option>Tour en globo aerostático (2 hrs)</option>
-                            <option>Tour Museo del Pulque (incluye degustación)</option>
-                            <option>Clínica de pádel (1 hr)</option>
-                            <option>Clínica de tenis (1 hr)</option>
                         </select>
                     </div>
+                    <div class="form-link-wrap"><a href="#actividades" class="link-btn">Conocer las actividades</a></div>
                     <div class="act-note" style="margin-bottom: 18px;"><strong>Nota:</strong> solo puedes seleccionar una actividad.</div>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-title">Menú de la cena</div>
+                    <div class="form-card-sub">Elige una de las 3 opciones</div>
+                    <div class="form-group">
+                        <select id="rsvp-menu" class="input-line">
+                            <option value="" disabled selected>Selecciona tu menú</option>
+                        </select>
+                    </div>
+                    <div class="form-link-wrap"><a href="#menu" class="link-btn">Ver el menú completo</a></div>
                 </div>
 
                 <div class="form-card">
@@ -850,6 +1091,254 @@
             }
         })();
 
+        /* =========================================================
+           DATOS: ACTIVIDADES Y MENÚ
+           ========================================================= */
+        const TYPES = { cultura: 'Cultura', sabores: 'Sabores', manualidades: 'Manualidades', deporte: 'Deporte' };
+
+        const ACTIVITIES = [
+            {
+                id: 'pulque', name: 'Recorrido al Museo del Pulque', time: '40 minutos', max: 40,
+                tags: ['cultura', 'sabores'],
+                desc: 'Explicación del museo del pulque con degustación de pulque natural y curado con sopecitos de haba tatemada con chapulines.',
+                icon: '<path d="M12 10h24l-3 30H15z"/><path d="M13.5 19h21"/><path d="M19 4c0 3 3 3 3 6M26 4c0 3 3 3 3 6"/>'
+            },
+            {
+                id: 'tapetes', name: 'Elaboración de tapetes típicos de Huamantla', time: '50 a 60 minutos', max: 60,
+                tags: ['cultura', 'manualidades'],
+                desc: 'Taller interactivo, donde aprenderás a crear las emblemáticas alfombras de aserrín de colores, una de las tradiciones más representativas del pueblo mágico de Huamantla.',
+                icon: '<rect x="8" y="8" width="32" height="32"/><path d="M24 8l16 16-16 16L8 24z"/><circle cx="24" cy="24" r="5"/>'
+            },
+            {
+                id: 'mixologia', name: 'Taller de Mixología', time: '45 a 60 minutos', max: 60,
+                tags: ['sabores'],
+                desc: 'Vive una experiencia interactiva en la que aprenderás a preparar y presentar cocteles de la mano de un profesional. Conocerás técnicas básicas de preparación con las que podrás elaborar tu propia bebida.',
+                icon: '<path d="M8 10h32L24 28z"/><path d="M24 28v12M16 40h16"/><path d="M13 16h22"/>'
+            },
+            {
+                id: 'totomoxtle', name: 'Figuras de Totomoxtle', time: '30 a 40 minutos', max: 40,
+                tags: ['manualidades'],
+                desc: 'Aprende a elaborar un sinfín de artesanías con la cáscara que cubre la mazorca a través de esta técnica.',
+                icon: '<path d="M24 5c10 8 12 22 0 37C12 27 14 13 24 5z"/><path d="M24 5v37M24 19l-8-6M24 27l8-6M24 34l-7-5"/>'
+            },
+            {
+                id: 'golf', name: 'Tiro de práctica de Golf', time: '30 a 40 minutos', max: 40,
+                tags: ['deporte'],
+                desc: 'Sesión donde se enseñan los fundamentos básicos del swing y control de la bola, con la guía de un instructor.',
+                icon: '<path d="M16 6v34"/><path d="M16 6l16 6-16 7"/><circle cx="31" cy="38" r="3.5"/><path d="M9 42h30"/>'
+            },
+            {
+                id: 'tenis', name: 'Clínica de Tenis', time: '60 minutos', max: 60,
+                tags: ['deporte'],
+                desc: 'Clínica de tenis para principiantes en la que se enseñan los fundamentos básicos del juego, tipo de golpes, reglas y ejercicios de coordinación con la guía de un entrenador.',
+                icon: '<ellipse cx="19" cy="18" rx="10" ry="14" transform="rotate(-35 19 18)"/><path d="M27 27l13 13"/><path d="M12 9l14 17M8 17l16 10"/>'
+            },
+            {
+                id: 'cabalgata', name: 'Cabalgata', time: '60 minutos', max: 60,
+                tags: ['deporte'],
+                desc: 'Disfruta la experiencia de montar a caballo, contemplando el paisaje natural que ofrece Hacienda Soltepec.',
+                icon: '<path d="M10 40V18a14 14 0 0 1 28 0v22h-8V18a6 6 0 0 0-12 0v22z"/><path d="M14 30h-4M38 30h-4M14 22h-4M38 22h-4"/>'
+            }
+        ];
+
+        const MENUS = [
+            {
+                id: 'm1', opt: 'Opción 1', main: 'Pechuga de pavo',
+                courses: [
+                    { label: 'Entrada', name: 'Crema de calabaza rostizada', desc: 'Con un toque de camote amarillo y camarón al ajo.' },
+                    { label: 'Plato fuerte', name: 'Pechuga de pavo al horno', desc: 'Rellena de manzana con especias, salsa de ciruela con un toque de vino tinto, guarnición de papas al perejil.' },
+                    { label: 'Postre', name: 'Cheesecake navideño', desc: 'Servido con natilla de guayaba con canela.' },
+                    { label: 'Ensalada', name: 'Ensalada de manzana', desc: '' }
+                ]
+            },
+            {
+                id: 'm2', opt: 'Opción 2', main: 'Salmón',
+                courses: [
+                    { label: 'Entrada', name: 'Ensalada navideña de betabel', desc: 'Con arúgula, gajos de naranja, jícama, queso de cabra y nuez.' },
+                    { label: 'Plato fuerte', name: 'Salmón al horno', desc: 'En costra de almendra, salsa cremosa de hinojo y verduras a la mantequilla.' },
+                    { label: 'Postre', name: 'Panacota', desc: 'En salsa de frutos rojos.' },
+                    { label: 'Ensalada', name: 'Ensalada de manzana', desc: '' }
+                ]
+            },
+            {
+                id: 'm3', opt: 'Opción 3', main: 'Pierna de cerdo',
+                courses: [
+                    { label: 'Entrada', name: 'Sopa de ajo', desc: 'Acompañada de crotón a las finas hierbas y queso gouda.' },
+                    { label: 'Plato fuerte', name: 'Pierna de cerdo al horno', desc: 'Marinada en adobo rojo, guarnición de ensalada de manzana.' },
+                    { label: 'Postre', name: 'Pastel de zanahoria con canela', desc: 'Con un toque de nuez y betún de queso mascarpone.' },
+                    { label: 'Ensalada', name: 'Ensalada de manzana', desc: '' }
+                ]
+            }
+        ];
+        MENUS.forEach(m => { m.value = `${m.opt} · ${m.main}`; });
+
+        const CHECK_SVG = '<svg viewBox="0 0 12 12"><path d="M2 6.5l2.6 2.6L10 3.4"/></svg>';
+
+        /* =========================================================
+           RENDER
+           ========================================================= */
+        const actGrid = document.getElementById('act-grid');
+        actGrid.innerHTML = ACTIVITIES.map((a, i) => `
+            <div class="act-item anim-element anim-fade-up" data-id="${a.id}" style="transition-delay:${(i % 2) * 0.12}s">
+                <div class="act-card" role="button" tabindex="0" aria-pressed="false" data-name="${a.name}">
+                    <div class="act-top">
+                        <div class="act-icon"><svg viewBox="0 0 48 48" aria-hidden="true">${a.icon}</svg></div>
+                        <div>
+                            <div class="act-name">${a.name}</div>
+                            <div class="act-tags">${a.tags.map(t => `<span class="act-tag">${TYPES[t]}</span>`).join('')}</div>
+                        </div>
+                    </div>
+                    <p class="act-desc">${a.desc}</p>
+                    <div class="act-meta">
+                        <span class="act-time">${a.time}</span>
+                        <span class="meter" style="--w:${Math.round(a.max / 60 * 100)}%"><i></i></span>
+                    </div>
+                    <div class="act-cta"><span class="cta-text">Elegir esta actividad</span><span class="check">${CHECK_SVG}</span></div>
+                </div>
+            </div>`).join('');
+
+        const menuGrid = document.getElementById('menu-grid');
+        menuGrid.innerHTML = MENUS.map((m, i) => `
+            <div class="anim-element anim-fade-up" style="transition-delay:${i * 0.15}s; height:100%;">
+                <div class="menu-card" role="radio" tabindex="0" aria-checked="false" data-value="${m.value}">
+                    <div class="menu-opt">${m.opt}</div>
+                    <div class="menu-main">${m.main}</div>
+                    <div class="menu-divider"></div>
+                    <div class="courses">
+                        ${m.courses.map(c => `
+                            <div class="course">
+                                <div class="course-label">${c.label}</div>
+                                <div class="course-name">${c.name}</div>
+                                ${c.desc ? `<div class="course-desc">${c.desc}</div>` : ''}
+                            </div>`).join('')}
+                    </div>
+                    <div class="act-cta"><span class="cta-text">Elegir esta opción</span><span class="check">${CHECK_SVG}</span></div>
+                </div>
+            </div>`).join('');
+
+        // Opciones del formulario (se generan con los mismos datos para que siempre coincidan)
+        const actSelect = document.getElementById('rsvp-activity');
+        const menuSelect = document.getElementById('rsvp-menu');
+        ACTIVITIES.forEach(a => actSelect.add(new Option(a.name, a.name)));
+        MENUS.forEach(m => menuSelect.add(new Option(m.value, m.value)));
+
+        /* =========================================================
+           INTERACCIÓN: AVISO, FILTROS Y SELECCIÓN
+           ========================================================= */
+        const toastEl = document.getElementById('toast');
+        let toastTimer;
+        function showToast(msg) {
+            toastEl.textContent = msg;
+            toastEl.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2400);
+        }
+
+        // Filtros de actividades
+        const filters = { type: 'all', dur: 'all' };
+        const actItems = Array.from(actGrid.querySelectorAll('.act-item'));
+        const actCount = document.getElementById('act-count');
+        const actEmpty = document.getElementById('act-empty');
+
+        function applyFilters() {
+            let visible = 0;
+            actItems.forEach(item => {
+                const a = ACTIVITIES.find(x => x.id === item.dataset.id);
+                const okType = filters.type === 'all' || a.tags.includes(filters.type);
+                const okDur = filters.dur === 'all' ||
+                    (filters.dur === 'short' && a.max <= 40) ||
+                    (filters.dur === 'hour' && a.max > 40);
+                const show = okType && okDur;
+                item.classList.toggle('is-hidden', !show);
+                if (show) visible++;
+            });
+            actCount.textContent = visible === ACTIVITIES.length
+                ? `${visible} actividades disponibles`
+                : `Mostrando ${visible} de ${ACTIVITIES.length} actividades`;
+            actEmpty.classList.toggle('show', visible === 0);
+        }
+
+        function bindChips(containerId, key, attr) {
+            const box = document.getElementById(containerId);
+            box.addEventListener('click', e => {
+                const chip = e.target.closest('.chip');
+                if (!chip) return;
+                box.querySelectorAll('.chip').forEach(c => { c.classList.remove('active'); c.setAttribute('aria-pressed', 'false'); });
+                chip.classList.add('active');
+                chip.setAttribute('aria-pressed', 'true');
+                filters[key] = chip.dataset[attr];
+                applyFilters();
+            });
+        }
+        bindChips('type-filters', 'type', 'type');
+        bindChips('dur-filters', 'dur', 'dur');
+        applyFilters();
+
+        // Selección (actividad y menú comparten la misma lógica)
+        const state = { activity: '', menu: '' };
+
+        function paintActivity() {
+            actGrid.querySelectorAll('.act-card').forEach(card => {
+                const on = card.dataset.name === state.activity;
+                card.classList.toggle('selected', on);
+                card.setAttribute('aria-pressed', on);
+                card.querySelector('.cta-text').textContent = on ? 'Actividad elegida' : 'Elegir esta actividad';
+            });
+            const sum = document.getElementById('act-summary');
+            sum.classList.toggle('has-pick', !!state.activity);
+            document.getElementById('act-summary-text').textContent = state.activity || 'Aún no eliges una. Toca una tarjeta para seleccionarla.';
+            actSelect.value = state.activity;
+        }
+
+        function paintMenu() {
+            menuGrid.querySelectorAll('.menu-card').forEach(card => {
+                const on = card.dataset.value === state.menu;
+                card.classList.toggle('selected', on);
+                card.setAttribute('aria-checked', on);
+                card.querySelector('.cta-text').textContent = on ? 'Tu elección' : 'Elegir esta opción';
+            });
+            const sum = document.getElementById('menu-summary');
+            sum.classList.toggle('has-pick', !!state.menu);
+            document.getElementById('menu-summary-text').textContent = state.menu || 'Aún no eliges uno. Toca una opción para seleccionarla.';
+            menuSelect.value = state.menu;
+        }
+
+        function setActivity(name, notify) {
+            state.activity = name;
+            paintActivity();
+            if (notify) showToast(name ? `Actividad elegida: ${name}` : 'Actividad quitada');
+        }
+        function setMenu(value, notify) {
+            state.menu = value;
+            paintMenu();
+            if (notify) showToast(value ? `Menú elegido: ${value}` : 'Menú quitado');
+        }
+
+        function bindCards(container, selector, getValue, getCurrent, setter) {
+            container.addEventListener('click', e => {
+                const card = e.target.closest(selector);
+                if (!card) return;
+                const v = getValue(card);
+                setter(getCurrent() === v ? '' : v, true);
+            });
+            container.addEventListener('keydown', e => {
+                if (e.key !== 'Enter' && e.key !== ' ') return;
+                const card = e.target.closest(selector);
+                if (!card) return;
+                e.preventDefault();
+                card.click();
+            });
+        }
+        bindCards(actGrid, '.act-card', c => c.dataset.name, () => state.activity, setActivity);
+        bindCards(menuGrid, '.menu-card', c => c.dataset.value, () => state.menu, setMenu);
+
+        document.getElementById('act-clear').addEventListener('click', () => setActivity('', true));
+        document.getElementById('menu-clear').addEventListener('click', () => setMenu('', true));
+
+        // Si eligen desde el formulario, se refleja en las tarjetas
+        actSelect.addEventListener('change', e => setActivity(e.target.value, false));
+        menuSelect.addEventListener('change', e => setMenu(e.target.value, false));
+
         // --- AUDIO ---
         let isMusicPlaying = false;
         const bgMusic = document.getElementById('bg-music');
@@ -926,7 +1415,8 @@
         function sendRSVP() {
             const name = document.getElementById('rsvp-name').value.trim();
             const status = rsvpStatus.value;
-            const activity = document.getElementById('rsvp-activity').value;
+            const activity = actSelect.value;
+            const menu = menuSelect.value;
             const roommate = document.getElementById('rsvp-roommate').value.trim();
             const responsible = document.getElementById('rsvp-responsible').value.trim();
 
@@ -938,6 +1428,10 @@
                 alert("Por favor, elige la actividad que te gustaría realizar.");
                 return;
             }
+            if (status === "yes" && menu === "") {
+                alert("Por favor, elige el menú que prefieres para la cena.");
+                return;
+            }
             if (status === "yes" && (roommate === "" || responsible === "")) {
                 alert("Por favor, indica con quién compartirás habitación y quién es el responsable.");
                 return;
@@ -947,6 +1441,7 @@
             if (status === "yes") {
                 text = `¡Hola! Soy ${name}. Confirmo con gusto mi asistencia a la Posada de Gala JLG Consultores (11 y 12 de diciembre, Hacienda Soltepec).\n\n` +
                        `• Actividad elegida: ${activity}\n` +
+                       `• Menú elegido: ${menu}\n` +
                        `• Comparto habitación con: ${roommate}\n` +
                        `• Responsable de la habitación: ${responsible}`;
             } else {
